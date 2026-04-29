@@ -27,9 +27,10 @@ export class MainScene extends Phaser.Scene {
             const buttonX = centerX + circleRadius * Math.cos(angle);
             const buttonY = centerY + circleRadius * Math.sin(angle);
             const frameOut = i;
+            const frameHover = 50 + i;
             const framePress = 25 + i;
 
-            createInteractiveButton(this, 'buttons', buttonX, buttonY, 75, 75, frameOut, frameOut, framePress, frameOut);
+            createInteractiveButton(this, 'buttons', buttonX, buttonY, 75, 75, frameHover, frameOut, framePress, frameOut);
         }
     }
 
