@@ -1,9 +1,12 @@
-import { createInteractiveButton } from '../ui/buttonA.js';
+import { InteractiveButton } from '../ui/buttonA.js';
 
 export class MainScene extends Phaser.Scene {
     constructor() {
         super('MainScene');
         this.mainButton = null;
+        this.letterButtons = new Map();
+        this.buttonsByName = new Map();
+        this.buttonsGroup = null;
     }
 
     preload() {
@@ -13,26 +16,58 @@ export class MainScene extends Phaser.Scene {
     }
 
     create() {
+        this.letterButtons.clear();
+        this.buttonsByName.clear();
+        this.buttonsGroup = this.add.group();
+
+        const letters = "ABCDEFGHIJLMNÑOPQRSTUVXYZ".split("");
         const centerX = this.scale.width / 2;
         const centerY = this.scale.height / 2;
+        const roscoRadius = 220; // Radio del rosco
+        const buttonRadius = 22;
 
         this.cameras.main.setBackgroundColor('#F0F0F0');
 
-        const circleRadius = 310;
-        const totalButtons = 25;
-        const angleStep = (Math.PI * 2) / totalButtons;
+        letters.forEach((char, i) => {
+            const angle = -Math.PI / 2 + (i / letters.length) * Math.PI * 2;
+            const buttonX = centerX + Math.cos(angle) * roscoRadius;
+            const buttonY = centerY + Math.sin(angle) * roscoRadius;
+            const buttonName = `${char}_button`;
 
-        for (let i = 0; i < totalButtons; i++) {
-            const angle = i * angleStep;
-            const buttonX = centerX + circleRadius * Math.cos(angle);
-            const buttonY = centerY + circleRadius * Math.sin(angle);
-            const frameOut = i;
-            const frameHover = 50 + i;
-            const framePress = 25 + i;
+            const button = new InteractiveButton(
+                this,
+                buttonName,
+                buttonX,
+                buttonY,
+                buttonRadius * 2,
+                buttonRadius * 2,
+                char
+            );
 
-            createInteractiveButton(this, 'buttons', buttonX, buttonY, 75, 75, frameHover, frameOut, framePress, frameOut);
-        }
+            this.buttonsGroup.add(button);
+            this.letterButtons.set(char, button);
+            this.buttonsByName.set(buttonName, button);
+        });
+    };
+
+    getButtonByLetter(letter) {
+        return this.letterButtons.get(letter) || null;
     }
+
+    getButtonByName(buttonName) {
+        return this.buttonsByName.get(buttonName) || null;
+    }
+
+    getButtonsByLetters(letters) {
+        return letters
+            .map((letter) => this.getButtonByLetter(letter))
+            .filter((button) => button !== null);
+    }
+
+    getAllButtons() {
+        return this.buttonsGroup ? this.buttonsGroup.getChildren() : [];
+    }
+
 
     update() {
     }

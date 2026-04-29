@@ -1,39 +1,59 @@
-/**
- * Creates an interactive button sprite with configurable frame states, position, and display size.
- *
- * @param {Phaser.Scene} scene - The Phaser scene context
- * @param {string} buttonName - The sprite key/name (spritesheet identifier)
- * @param {number} posX - X position where to paint the button
- * @param {number} posY - Y position where to paint the button
- * @param {number} displayWidth - Display width in pixels
- * @param {number} displayHeight - Display height in pixels
- * @param {number} frameHover - Frame to display on pointer over
- * @param {number} frameOut - Frame to display on pointer out
- * @param {number} frameDown - Frame to display on pointer down
- * @param {number} frameUp - Frame to display on pointer up
- * @returns {Phaser.Physics.Arcade.Sprite} The created button sprite
- */
-export function createInteractiveButton(scene, buttonName, posX, posY, displayWidth, displayHeight, frameHover, frameOut, frameDown, frameUp) {
-    const button = scene.add.sprite(posX, posY, buttonName, frameOut)
-        .setInteractive({ useHandCursor: true })
-        .setDisplaySize(displayWidth, displayHeight);
+export class InteractiveButton extends Phaser.GameObjects.Container {
+    constructor(scene, buttonName, posX, posY, displayWidth, displayHeight, label = '', onPointerDown = null) {
+        super(scene, posX, posY);
 
-    button.on('pointerover', () => {
-        button.setFrame(frameHover);
-    });
+        const radius = Math.min(displayWidth, displayHeight) / 2;
 
-    button.on('pointerout', () => {
-        button.setFrame(frameOut);
-    });
+        this.buttonName = buttonName;
+        this.label = label;
+        this.onPointerDown = onPointerDown;
+        this.baseOffset = 0;
+        this.hoverOffset = -4;
 
-    button.on('pointerdown', () => {
-        button.setFrame(frameDown);
-    });
+        this.shadow = scene.add.circle(4, 4, radius, 0x000000);
+        this.circle = scene.add.circle(0, 0, radius, 0xfadf09);
+        this.circle.setStrokeStyle(1, 0x000000);
+        this.text = scene.add.text(0, 0, label, {
+            fontSize: '24px',
+            fontFamily: 'Archivo Black',
+            color: '#000000'
+        }).setOrigin(0.5);
 
-    button.on('pointerup', () => {
-        button.setFrame(frameUp);
-        console.log(`${buttonName} pulsado`);
-    });
+        this.add([this.shadow, this.circle, this.text]);
+        this.setSize(displayWidth, displayHeight);
+        this.setName(buttonName);
 
-    return button;
+        this.circle.setInteractive({ useHandCursor: true });
+        this.circle.on('pointerover', this.handlePointerOver, this);
+        this.circle.on('pointerout', this.handlePointerOut, this);
+        this.circle.on('pointerdown', this.handlePointerDown, this);
+
+        scene.add.existing(this);
+    }
+
+    handlePointerOver() {
+        this.circle.setPosition(this.hoverOffset, this.hoverOffset);
+        this.text.setPosition(this.hoverOffset, this.hoverOffset);
+    }
+
+    handlePointerOut() {
+        this.circle.setPosition(this.baseOffset, this.baseOffset);
+        this.text.setPosition(this.baseOffset, this.baseOffset);
+    }
+
+    handlePointerDown() {
+        this.circle.setFillStyle(0xffffff);
+        console.log(`pointerdown on button: ${this.buttonName}`);
+
+        if (typeof this.onPointerDown === 'function') {
+            this.onPointerDown(this.label, {
+                circle: this.circle,
+                text: this.text,
+                shadow: this.shadow,
+                buttonName: this.buttonName,
+                button: this
+            });
+        }
+    }
 }
+
