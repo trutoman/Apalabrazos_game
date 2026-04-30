@@ -9,8 +9,9 @@ export class InteractiveButton extends Phaser.GameObjects.Container {
         this.onPointerDown = onPointerDown;
         this.baseOffset = 0;
         this.hoverOffset = -4;
+        this.shadowOffset = 4;
 
-        this.shadow = scene.add.circle(4, 4, radius, 0x000000);
+        this.shadow = scene.add.circle(this.shadowOffset, this.shadowOffset, radius, 0x000000);
         this.circle = scene.add.circle(0, 0, radius, 0xfadf09);
         this.circle.setStrokeStyle(1, 0x000000);
         this.text = scene.add.text(0, 0, label, {
@@ -42,7 +43,8 @@ export class InteractiveButton extends Phaser.GameObjects.Container {
     }
 
     handlePointerDown() {
-        this.circle.setFillStyle(0xffffff);
+        this.circle.setPosition(this.shadowOffset, this.shadowOffset);
+        this.text.setPosition(this.shadowOffset, this.shadowOffset);
         console.log(`pointerdown on button: ${this.buttonName}`);
 
         if (typeof this.onPointerDown === 'function') {
