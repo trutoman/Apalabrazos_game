@@ -36,7 +36,7 @@ export class Counter {
             this.timeValue, null,
             {
                 type: 'irregular',
-                circleColor: 0xfff200,
+                circleColor: 0xF0F0F0,
                 strokeColor: 0x000000,
                 strokeWidth: 2,
                 textColor: '#000000',

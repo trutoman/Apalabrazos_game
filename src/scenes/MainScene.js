@@ -2,6 +2,8 @@ import { Rosco } from '../ui/rosco.js';
 import { Question } from '../ui/question.js';
 import { Counter } from '../ui/counter.js';
 import { InteractiveButton } from '../ui/interactiveButton.js';
+import { Scoreboard } from '../ui/scoreboard.js';
+import { Posiciones } from '../ui/posiciones.js';
 
 export class MainScene extends Phaser.Scene {
     constructor() {
@@ -56,12 +58,29 @@ export class MainScene extends Phaser.Scene {
                 centerY: layoutCenter.y,
                 roscoRadius: roscoConfig.roscoRadius,
                 roscoButtonRadius: roscoConfig.buttonRadius,
-                questionBottomOffset: 75
+                questionBottomOffset: 45
             }
         );
 
         const counterHeight = 110;
-        const counterTopY = this.question.questionBox.y + (this.question.questionBox.height / 2) + 14;
+        const counterTopY = this.question.questionBox.y + (this.question.questionBox.height / 2) + 24;
+
+        const leftAnswerEdgeX  = this.question.positionMap[1].x - this.question.answerRadius;
+        const rightAnswerEdgeX = this.question.positionMap[2].x + this.question.answerRadius;
+
+        this.scoreboard = new Scoreboard(this, {
+            leftEdgeX: leftAnswerEdgeX,
+            topY: 20,
+            width: 310,
+            height: 130
+        });
+
+        this.posiciones = new Posiciones(this, {
+            rightEdgeX: rightAnswerEdgeX,
+            topY: 20,
+            width: 310,
+            height: 130
+        });
 
         this.counter = new Counter(this, {
             centerX: layoutCenter.x,
@@ -73,31 +92,10 @@ export class MainScene extends Phaser.Scene {
             wrongValue: 0
         });
 
-        this._addIrregularDemo();
+
     };
 
     update() {
     }
 
-    _addIrregularDemo() {
-        const demoW = 400;
-        const demoH = 120;
-        new InteractiveButton(
-            this, 'irregular_demo',
-            20 + demoW / 2, 20 + demoH / 2,
-            demoW, demoH,
-            'IRREGULAR', null,
-            {
-                type: 'irregular',
-                circleColor: 0xff00f4,
-                strokeColor: 0x000000,
-                strokeWidth: 4,
-                textColor: '#ffffff',
-                fontSize: '24px',
-                shadowColor: 0x000000,
-                shadowAlpha: 1,
-                shadowDepth: 8
-            }
-        );
-    }
 }

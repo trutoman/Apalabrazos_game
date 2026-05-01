@@ -23,6 +23,8 @@ export class InteractiveButton extends Phaser.GameObjects.Container {
         this.baseOffset = 0;
         this.hoverOffset = -shadowDepth;
         this.shadowOffset = shadowDepth;
+        this._cx = 0;
+        this._cy = 0;
 
         if (type === 'irregular') {
             const w = displayWidth / 2;
@@ -85,9 +87,14 @@ export class InteractiveButton extends Phaser.GameObjects.Container {
     }
 
     _moveContent(x, y) {
+        const dx = x - this._cx;
+        const dy = y - this._cy;
+        this._cx = x;
+        this._cy = y;
         this.each(child => {
             if (child !== this.shadow) {
-                child.setPosition(x, y);
+                child.x += dx;
+                child.y += dy;
             }
         });
     }
