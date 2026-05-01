@@ -13,12 +13,16 @@ export class Rosco {
         this.letterButtons = new Map();
         this.buttonsByName = new Map();
         this.buttonsGroup = this.scene.add.group();
+        this.centerButton = null;
+        this.centerButtonText = null;
 
         this.create();
     }
 
     create() {
         this.scene.cameras.main.setBackgroundColor(this.backgroundColor);
+
+        this.createCenterButton();
 
         this.letters.forEach((char, i) => {
             const angle = -Math.PI / 2 + (i / this.letters.length) * Math.PI * 2;
@@ -40,6 +44,26 @@ export class Rosco {
             this.letterButtons.set(char, button);
             this.buttonsByName.set(buttonName, button);
         });
+    }
+
+    createCenterButton() {
+        const marginToLetters = this.buttonRadius * 2;
+        const maxCenterRadius = this.roscoRadius - this.buttonRadius - marginToLetters;
+        const centerRadius = Math.max(60, maxCenterRadius);
+
+        this.centerButton = this.scene.add.circle(
+            this.centerX,
+            this.centerY,
+            centerRadius,
+            0x00f0ff
+        );
+        this.centerButton.setStrokeStyle(2, 0x000000);
+
+        this.centerButtonText = this.scene.add.text(this.centerX, this.centerY, 'PASAR', {
+            fontSize: '38px',
+            fontFamily: 'Archivo Black',
+            color: '#000000'
+        }).setOrigin(0.5);
     }
 
     getButtonByLetter(letter) {
