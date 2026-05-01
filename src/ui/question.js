@@ -1,3 +1,5 @@
+import { InteractiveButton } from './interactiveButton.js';
+
 export class Question {
     // answer1..4 = { text: string, index: 1|2|3|4 }
     // question   = string
@@ -13,6 +15,7 @@ export class Question {
         this.answerRadius = options.answerRadius || 50;
         this.answerTextMaxWidth = options.answerTextMaxWidth || 200;
         this.labelMap = { 1: '1', 2: '2', 3: '3', 4: '4' };
+        this.answerButtons = new Map();
 
         this.positionMap = this._buildSidePositionMap(options);
 
@@ -56,19 +59,25 @@ export class Question {
         const label = this.labelMap[answer.index];
         const r     = this.answerRadius;
 
-        // Shadow
-        this.scene.add.circle(pos.x + 4, pos.y + 4, r, 0x000000, 0.35);
-
-        // Main circle
-        const circle = this.scene.add.circle(pos.x, pos.y, r, 0x8e44ad);
-        circle.setStrokeStyle(3, 0x5b2c6f);
-
-        // Letter label
-        this.scene.add.text(pos.x, pos.y, label, {
-            fontSize: '32px',
-            fontFamily: 'Archivo Black',
-            color: '#ffffff',
-        }).setOrigin(0.5);
+        const button = new InteractiveButton(
+            this.scene,
+            `answer_${answer.index}_button`,
+            pos.x,
+            pos.y,
+            r * 2,
+            r * 2,
+            label,
+            null,
+            {
+                circleColor: 0xff00f4,
+                strokeColor: 0x5b2c6f,
+                strokeWidth: 3,
+                textColor: '#ffffff',
+                fontSize: '32px',
+                shadowAlpha: 1
+            }
+        );
+        this.answerButtons.set(answer.index, button);
 
         // Answer text beside the circle
         const gap      = r + 14;

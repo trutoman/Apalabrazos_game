@@ -1,4 +1,4 @@
-import { InteractiveButton } from './roscoButton.js';
+import { InteractiveButton } from './interactiveButton.js';
 
 export class Rosco {
     constructor(scene, options = {}) {
@@ -14,7 +14,6 @@ export class Rosco {
         this.buttonsByName = new Map();
         this.buttonsGroup = this.scene.add.group();
         this.centerButton = null;
-        this.centerButtonText = null;
 
         this.create();
     }
@@ -51,19 +50,23 @@ export class Rosco {
         const maxCenterRadius = this.roscoRadius - this.buttonRadius - marginToLetters;
         const centerRadius = Math.max(60, maxCenterRadius);
 
-        this.centerButton = this.scene.add.circle(
+        this.centerButton = new InteractiveButton(
+            this.scene,
+            'pass_button',
             this.centerX,
             this.centerY,
-            centerRadius,
-            0x00f0ff
+            centerRadius * 2,
+            centerRadius * 2,
+            'PASAR',
+            null,
+            {
+                circleColor: 0x00f0ff,
+                strokeColor: 0x000000,
+                strokeWidth: 2,
+                textColor: '#000000',
+                fontSize: '38px'
+            }
         );
-        this.centerButton.setStrokeStyle(2, 0x000000);
-
-        this.centerButtonText = this.scene.add.text(this.centerX, this.centerY, 'PASAR', {
-            fontSize: '38px',
-            fontFamily: 'Archivo Black',
-            color: '#000000'
-        }).setOrigin(0.5);
     }
 
     getButtonByLetter(letter) {
