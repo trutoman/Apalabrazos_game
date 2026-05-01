@@ -42,6 +42,7 @@ export class MainScene extends Phaser.Scene {
 
         this.rosco = new Rosco(this, roscoConfig);
 
+
         this.question = new Question(
             this,
             { text: 'Respuesta A', index: 1 },

@@ -25,28 +25,40 @@ export class Question {
 
     _buildSidePositionMap(options = {}) {
         const horizontalGapFromRosco = options.horizontalGapFromRosco || 130;
-        const verticalOffset = Math.round(this.roscoRadius * 0.45);
-        const minSidePadding = 20;
-        const roscoTextSafeGap = 24;
-        const gapTextToCircle = this.answerRadius + 14;
-        const minLeftCircleXByViewport = minSidePadding + this.answerRadius;
-        const maxRightCircleXByViewport = this.scene.scale.width - minSidePadding - this.answerRadius;
-        const maxLeftCircleXByTextViewport = this.scene.scale.width - minSidePadding - this.answerTextMaxWidth - gapTextToCircle;
-        const minRightCircleXByTextViewport = minSidePadding + this.answerTextMaxWidth + gapTextToCircle;
-        const roscoOuterRadius = this.roscoRadius + this.roscoButtonRadius;
-        const roscoLeftBound = this.centerX - roscoOuterRadius;
-        const roscoRightBound = this.centerX + roscoOuterRadius;
-        const maxLeftCircleXByRosco = roscoLeftBound - roscoTextSafeGap - this.answerTextMaxWidth - gapTextToCircle;
-        const minRightCircleXByRosco = roscoRightBound + roscoTextSafeGap + this.answerTextMaxWidth + gapTextToCircle;
-        const baseOffsetX = this.roscoRadius + this.roscoButtonRadius + this.answerRadius + horizontalGapFromRosco;
-        const leftCircleX = Math.max(minLeftCircleXByViewport, Math.min(this.centerX - baseOffsetX, Math.min(maxLeftCircleXByTextViewport, maxLeftCircleXByRosco)));
-        const rightCircleX = Math.max(Math.max(minRightCircleXByTextViewport, minRightCircleXByRosco), Math.min(this.centerX + baseOffsetX, maxRightCircleXByViewport));
+        const verticalOffset = Math.round(this.roscoRadius * 0.40);
+        const sidePadding    = 20;
+        const roscoSafeGap   = 24;
+        const halfButton     = this.answerRadius;           // half-side of the square button
+        const textGap        = halfButton + 14;             // from button center to text edge
+
+        const answersVerticalOffset = 30;
+
+        const roscoEdgeLeft  = this.centerX - (this.roscoRadius + this.roscoButtonRadius);
+        const roscoEdgeRight = this.centerX + (this.roscoRadius + this.roscoButtonRadius);
+        const preferred      = this.roscoRadius + this.roscoButtonRadius + halfButton + horizontalGapFromRosco;
+
+        // Left button: text drawn to the right — keep button left enough so text clears rosco & viewport
+        const maxLeftX = Math.min(
+            roscoEdgeLeft  - roscoSafeGap - this.answerTextMaxWidth - textGap,
+            this.scene.scale.width - sidePadding - this.answerTextMaxWidth - textGap
+        );
+        const leftX = Math.max(sidePadding + halfButton, Math.min(this.centerX - preferred, maxLeftX));
+
+        // Right button: text drawn to the left — keep button right enough so text clears rosco & viewport
+        const minRightX = Math.max(
+            roscoEdgeRight + roscoSafeGap + this.answerTextMaxWidth + textGap,
+            sidePadding + this.answerTextMaxWidth + textGap
+        );
+        const rightX = Math.min(
+            this.scene.scale.width - sidePadding - halfButton,
+            Math.max(this.centerX + preferred, minRightX)
+        );
 
         return {
-            1: { x: leftCircleX,  y: this.centerY - verticalOffset, textSide: 'right' },
-            2: { x: rightCircleX, y: this.centerY - verticalOffset, textSide: 'left'  },
-            3: { x: leftCircleX,  y: this.centerY + verticalOffset, textSide: 'right' },
-            4: { x: rightCircleX, y: this.centerY + verticalOffset, textSide: 'left'  },
+            1: { x: leftX,  y: this.centerY - verticalOffset + answersVerticalOffset, textSide: 'right' },
+            2: { x: rightX, y: this.centerY - verticalOffset + answersVerticalOffset, textSide: 'left'  },
+            3: { x: leftX,  y: this.centerY + verticalOffset + answersVerticalOffset, textSide: 'right' },
+            4: { x: rightX, y: this.centerY + verticalOffset + answersVerticalOffset, textSide: 'left'  },
         };
     }
 
