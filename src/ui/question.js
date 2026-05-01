@@ -10,31 +10,17 @@ export class Question {
         this.centerY = options.centerY ?? (this.scene.scale.height / 2);
         this.roscoRadius = options.roscoRadius || 220;
         this.roscoButtonRadius = options.roscoButtonRadius || 22;
-        this.answerRadius = Phaser.Math.Clamp(
-            options.answerRadius ?? Math.round(this.roscoRadius * 0.23),
-            28,
-            50
-        );
-        this.answerTextMaxWidth = Phaser.Math.Clamp(
-            options.answerTextMaxWidth ?? Math.round(this.scene.scale.width * 0.16),
-            110,
-            220
-        );
-        this.labelMap = { 1: 'A', 2: 'B', 3: 'C', 4: 'D' };
+        this.answerRadius = options.answerRadius || 50;
+        this.answerTextMaxWidth = options.answerTextMaxWidth || 200;
+        this.labelMap = { 1: '1', 2: '2', 3: '3', 4: '4' };
 
-        this.positionMap = this.scene.scale.width < 1000
-            ? this._buildVerticalPositionMap()
-            : this._buildSidePositionMap(options);
+        this.positionMap = this._buildSidePositionMap(options);
 
         this._drawAll();
     }
 
     _buildSidePositionMap(options = {}) {
-        const horizontalGapFromRosco = Phaser.Math.Clamp(
-            options.horizontalGapFromRosco ?? Math.round(this.scene.scale.width * 0.08),
-            30,
-            130
-        );
+        const horizontalGapFromRosco = options.horizontalGapFromRosco || 130;
         const verticalOffset = Math.round(this.roscoRadius * 0.45);
         const minSidePadding = 20;
         const roscoTextSafeGap = 24;
@@ -60,27 +46,6 @@ export class Question {
         };
     }
 
-    _buildVerticalPositionMap() {
-        // Answers placed below the rosco in two rows: [A B] / [C D]
-        // Circle is on the outer side, text goes toward center
-        const rowGap = this.answerRadius * 2 + 20;
-        const baseY = this.centerY + this.roscoRadius + this.roscoButtonRadius + this.answerRadius + 30;
-        const halfGap = this.answerRadius + 14 + this.answerTextMaxWidth / 2;
-        const cx = this.centerX;
-
-        // Left column: circles at cx - halfGap, text to the right toward center
-        // Right column: circles at cx + halfGap, text to the left toward center
-        const leftX  = cx - halfGap;
-        const rightX = cx + halfGap;
-
-        return {
-            1: { x: leftX,  y: baseY,          textSide: 'right' }, // A top-left
-            2: { x: rightX, y: baseY,          textSide: 'left'  }, // B top-right
-            3: { x: leftX,  y: baseY + rowGap, textSide: 'right' }, // C bottom-left
-            4: { x: rightX, y: baseY + rowGap, textSide: 'left'  }, // D bottom-right
-        };
-    }
-
     _drawAll() {
         this.answers.forEach(answer => this._drawAnswer(answer));
         this._drawQuestion();
@@ -100,7 +65,7 @@ export class Question {
 
         // Letter label
         this.scene.add.text(pos.x, pos.y, label, {
-            fontSize: `${Phaser.Math.Clamp(Math.round(r * 0.64), 18, 32)}px`,
+            fontSize: '32px',
             fontFamily: 'Archivo Black',
             color: '#ffffff',
         }).setOrigin(0.5);
@@ -120,22 +85,19 @@ export class Question {
 
     _drawQuestion() {
         const cx = this.centerX;
-        const yFromRosco = this.centerY + this.roscoRadius + Math.round(this.scene.scale.height * 0.22);
-        const barHeight = Phaser.Math.Clamp(Math.round(this.scene.scale.height * 0.085), 44, 64);
-        const barWidth = Phaser.Math.Clamp(this.scene.scale.width - 40, 320, 900);
-        const textWrapWidth = barWidth - 40;
-        const barY = Math.min(this.scene.scale.height - Math.round(barHeight / 2) - 8, yFromRosco);
+        const yFromRosco = this.centerY + this.roscoRadius + 170;
+        const barY = Math.min(this.scene.scale.height - 52, yFromRosco);
 
         // Background bar
-        this.scene.add.rectangle(cx, barY, barWidth, barHeight, 0x1a1a2e, 0.75)
+        this.scene.add.rectangle(cx, barY, 900, 60, 0x1a1a2e, 0.75)
             .setOrigin(0.5);
 
         this.scene.add.text(cx, barY, this.questionText, {
-            fontSize: `${Phaser.Math.Clamp(Math.round(this.scene.scale.width * 0.016), 14, 20)}px`,
+            fontSize: '20px',
             fontFamily: 'Archivo Black',
             color: '#ffffff',
             align: 'center',
-            wordWrap: { width: textWrapWidth },
+            wordWrap: { width: 860 },
         }).setOrigin(0.5);
     }
 }
