@@ -1,6 +1,6 @@
 import { InteractiveButton } from './interactiveButton.js';
 
-export class Posiciones {
+export class Standings {
     /**
      * @param {Phaser.Scene} scene
      * @param {object} options

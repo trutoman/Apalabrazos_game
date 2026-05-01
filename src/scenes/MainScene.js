@@ -3,7 +3,7 @@ import { Question } from '../ui/question.js';
 import { Counter } from '../ui/counter.js';
 import { InteractiveButton } from '../ui/interactiveButton.js';
 import { Scoreboard } from '../ui/scoreboard.js';
-import { Posiciones } from '../ui/posiciones.js';
+import { Standings } from '../ui/standings.js';
 
 export class MainScene extends Phaser.Scene {
     constructor() {
@@ -75,7 +75,7 @@ export class MainScene extends Phaser.Scene {
             height: 130
         });
 
-        this.posiciones = new Posiciones(this, {
+        this.standings = new Standings(this, {
             rightEdgeX: rightAnswerEdgeX,
             topY: 20,
             width: 310,
