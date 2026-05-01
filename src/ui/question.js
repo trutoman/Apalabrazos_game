@@ -12,6 +12,7 @@ export class Question {
         this.centerY = options.centerY ?? (this.scene.scale.height / 2);
         this.roscoRadius = options.roscoRadius || 220;
         this.roscoButtonRadius = options.roscoButtonRadius || 22;
+        this.questionBottomOffset = options.questionBottomOffset || 140;
         this.answerRadius = options.answerRadius || 50;
         this.answerTextMaxWidth = options.answerTextMaxWidth || 200;
         this.labelMap = { 1: '1', 2: '2', 3: '3', 4: '4' };
@@ -96,7 +97,7 @@ export class Question {
 
     _drawQuestion() {
         const cx = this.centerX;
-        const yFromRosco = this.centerY + this.roscoRadius + 170;
+        const yFromRosco = this.centerY + this.roscoRadius + this.questionBottomOffset;
         const barY = Math.min(this.scene.scale.height - 52, yFromRosco);
         const barWidth = Math.min(900, this.scene.scale.width - 40);
         const barHeight = 60;
@@ -119,9 +120,8 @@ export class Question {
                 fontSize: '20px',
                 shadowColor: 0x000000,
                 shadowAlpha: 1,
-                shadowDepth: 4,
+                shadowDepth: 9,
                 useHandCursor: false,
-                shadowDepth: 9
             }
         );
 

@@ -53,19 +53,24 @@ export class InteractiveButton extends Phaser.GameObjects.Container {
         scene.add.existing(this);
     }
 
+    _moveContent(x, y) {
+        this.each(child => {
+            if (child !== this.shadow) {
+                child.setPosition(x, y);
+            }
+        });
+    }
+
     handlePointerOver() {
-        this.circle.setPosition(this.hoverOffset, this.hoverOffset);
-        this.text.setPosition(this.hoverOffset, this.hoverOffset);
+        this._moveContent(this.hoverOffset, this.hoverOffset);
     }
 
     handlePointerOut() {
-        this.circle.setPosition(this.baseOffset, this.baseOffset);
-        this.text.setPosition(this.baseOffset, this.baseOffset);
+        this._moveContent(this.baseOffset, this.baseOffset);
     }
 
     handlePointerDown() {
-        this.circle.setPosition(this.shadowOffset, this.shadowOffset);
-        this.text.setPosition(this.shadowOffset, this.shadowOffset);
+        this._moveContent(this.shadowOffset, this.shadowOffset);
         console.log(`pointerdown on button: ${this.buttonName}`);
 
         if (typeof this.onPointerDown === 'function') {
