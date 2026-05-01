@@ -1,12 +1,12 @@
-import { InteractiveButton } from '../ui/buttonA.js';
+import { Rosco } from '../ui/rosco.js';
+import { Question } from '../ui/question.js';
 
 export class MainScene extends Phaser.Scene {
     constructor() {
         super('MainScene');
         this.mainButton = null;
-        this.letterButtons = new Map();
-        this.buttonsByName = new Map();
-        this.buttonsGroup = null;
+        this.rosco = null;
+        this.question = null;
     }
 
     preload() {
@@ -16,58 +16,37 @@ export class MainScene extends Phaser.Scene {
     }
 
     create() {
-        this.letterButtons.clear();
-        this.buttonsByName.clear();
-        this.buttonsGroup = this.add.group();
+        const layoutCenter = {
+            x: this.scale.width / 2,
+            y: this.scale.height / 2
+        };
 
-        const letters = "ABCDEFGHIJLMNÑOPQRSTUVXYZ".split("");
-        const centerX = this.scale.width / 2;
-        const centerY = this.scale.height / 2;
-        const roscoRadius = 220; // Radio del rosco
-        const buttonRadius = 22;
+        const roscoConfig = {
+            letters: 'ABCDEFGHIJLMNÑOPQRSTUVXYZ',
+            centerX: layoutCenter.x,
+            centerY: layoutCenter.y,
+            roscoRadius: 220,
+            buttonRadius: 22,
+            backgroundColor: '#F0F0F0'
+        };
 
-        this.cameras.main.setBackgroundColor('#F0F0F0');
+        this.rosco = new Rosco(this, roscoConfig);
 
-        letters.forEach((char, i) => {
-            const angle = -Math.PI / 2 + (i / letters.length) * Math.PI * 2;
-            const buttonX = centerX + Math.cos(angle) * roscoRadius;
-            const buttonY = centerY + Math.sin(angle) * roscoRadius;
-            const buttonName = `${char}_button`;
-
-            const button = new InteractiveButton(
-                this,
-                buttonName,
-                buttonX,
-                buttonY,
-                buttonRadius * 2,
-                buttonRadius * 2,
-                char
-            );
-
-            this.buttonsGroup.add(button);
-            this.letterButtons.set(char, button);
-            this.buttonsByName.set(buttonName, button);
-        });
+        this.question = new Question(
+            this,
+            { text: 'Respuesta A', index: 1 },
+            { text: 'Respuesta B', index: 2 },
+            { text: 'Respuesta C', index: 3 },
+            { text: 'Respuesta D', index: 4 },
+            'Escribe aquí el enunciado de la pregunta',
+            {
+                centerX: layoutCenter.x,
+                centerY: layoutCenter.y,
+                roscoRadius: roscoConfig.roscoRadius,
+                roscoButtonRadius: roscoConfig.buttonRadius
+            }
+        );
     };
-
-    getButtonByLetter(letter) {
-        return this.letterButtons.get(letter) || null;
-    }
-
-    getButtonByName(buttonName) {
-        return this.buttonsByName.get(buttonName) || null;
-    }
-
-    getButtonsByLetters(letters) {
-        return letters
-            .map((letter) => this.getButtonByLetter(letter))
-            .filter((button) => button !== null);
-    }
-
-    getAllButtons() {
-        return this.buttonsGroup ? this.buttonsGroup.getChildren() : [];
-    }
-
 
     update() {
     }
