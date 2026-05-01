@@ -4,6 +4,7 @@ export class InteractiveButton extends Phaser.GameObjects.Container {
 
         const radius = Math.min(displayWidth, displayHeight) / 2;
         const {
+            type = 'circle',
             circleColor = 0xfadf09,
             strokeColor = 0x000000,
             strokeWidth = 1,
@@ -12,18 +13,27 @@ export class InteractiveButton extends Phaser.GameObjects.Container {
             fontFamily = 'Archivo Black',
             shadowColor = 0x000000,
             shadowAlpha = 1,
-            useHandCursor = true
+            useHandCursor = true,
+            shadowDepth = 4
         } = options;
 
         this.buttonName = buttonName;
         this.label = label;
         this.onPointerDown = onPointerDown;
         this.baseOffset = 0;
-        this.hoverOffset = -4;
-        this.shadowOffset = 4;
+        this.hoverOffset = -shadowDepth;
+        this.shadowOffset = shadowDepth;
 
-        this.shadow = scene.add.circle(this.shadowOffset, this.shadowOffset, radius, shadowColor, shadowAlpha);
-        this.circle = scene.add.circle(0, 0, radius, circleColor);
+        const isSquare = type === 'square';
+
+        if (isSquare) {
+            this.shadow = scene.add.rectangle(this.shadowOffset, this.shadowOffset, displayWidth, displayHeight, shadowColor, shadowAlpha);
+            this.circle = scene.add.rectangle(0, 0, displayWidth, displayHeight, circleColor);
+        } else {
+            this.shadow = scene.add.circle(this.shadowOffset, this.shadowOffset, radius, shadowColor, shadowAlpha);
+            this.circle = scene.add.circle(0, 0, radius, circleColor);
+        }
+
         this.circle.setStrokeStyle(strokeWidth, strokeColor);
         this.text = scene.add.text(0, 0, label, {
             fontSize,

@@ -96,17 +96,34 @@ export class Question {
         const cx = this.centerX;
         const yFromRosco = this.centerY + this.roscoRadius + 170;
         const barY = Math.min(this.scene.scale.height - 52, yFromRosco);
+        const barWidth = Math.min(900, this.scene.scale.width - 40);
+        const barHeight = 60;
 
-        // Background bar
-        this.scene.add.rectangle(cx, barY, 900, 60, 0x1a1a2e, 0.75)
-            .setOrigin(0.5);
+        this.questionBox = new InteractiveButton(
+            this.scene,
+            'question_box',
+            cx,
+            barY,
+            barWidth,
+            barHeight,
+            this.questionText,
+            null,
+            {
+                type: 'square',
+                circleColor: 0xfadf09,
+                strokeColor: 0x000000,
+                strokeWidth: 2,
+                textColor: '#000000',
+                fontSize: '20px',
+                shadowColor: 0x000000,
+                shadowAlpha: 1,
+                shadowDepth: 4,
+                useHandCursor: false
+            }
+        );
 
-        this.scene.add.text(cx, barY, this.questionText, {
-            fontSize: '20px',
-            fontFamily: 'Archivo Black',
-            color: '#ffffff',
-            align: 'center',
-            wordWrap: { width: 860 },
-        }).setOrigin(0.5);
+        this.questionBox.text.setWordWrapWidth(barWidth - 40, true);
+        this.questionBox.text.setAlign('center');
+        this.questionBox.text.setOrigin(0.5);
     }
 }

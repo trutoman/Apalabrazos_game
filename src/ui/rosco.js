@@ -64,7 +64,8 @@ export class Rosco {
                 strokeColor: 0x000000,
                 strokeWidth: 2,
                 textColor: '#000000',
-                fontSize: '38px'
+                fontSize: '38px',
+                shadowDepth: 6
             }
         );
     }
