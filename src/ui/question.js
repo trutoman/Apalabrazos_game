@@ -10,48 +10,75 @@ export class Question {
         this.centerY = options.centerY ?? (this.scene.scale.height / 2);
         this.roscoRadius = options.roscoRadius || 220;
         this.roscoButtonRadius = options.roscoButtonRadius || 22;
-        this.answerRadius = 50;
-        this.answerTextMaxWidth = 200;
+        this.answerRadius = Phaser.Math.Clamp(
+            options.answerRadius ?? Math.round(this.roscoRadius * 0.23),
+            28,
+            50
+        );
+        this.answerTextMaxWidth = Phaser.Math.Clamp(
+            options.answerTextMaxWidth ?? Math.round(this.scene.scale.width * 0.16),
+            110,
+            220
+        );
         this.labelMap = { 1: 'A', 2: 'B', 3: 'C', 4: 'D' };
 
-        const horizontalGapFromRosco = 130;
+        this.positionMap = this.scene.scale.width < 1000
+            ? this._buildVerticalPositionMap()
+            : this._buildSidePositionMap(options);
+
+        this._drawAll();
+    }
+
+    _buildSidePositionMap(options = {}) {
+        const horizontalGapFromRosco = Phaser.Math.Clamp(
+            options.horizontalGapFromRosco ?? Math.round(this.scene.scale.width * 0.08),
+            30,
+            130
+        );
         const verticalOffset = Math.round(this.roscoRadius * 0.45);
         const minSidePadding = 20;
         const roscoTextSafeGap = 24;
         const gapTextToCircle = this.answerRadius + 14;
         const minLeftCircleXByViewport = minSidePadding + this.answerRadius;
         const maxRightCircleXByViewport = this.scene.scale.width - minSidePadding - this.answerRadius;
-
         const maxLeftCircleXByTextViewport = this.scene.scale.width - minSidePadding - this.answerTextMaxWidth - gapTextToCircle;
         const minRightCircleXByTextViewport = minSidePadding + this.answerTextMaxWidth + gapTextToCircle;
-
-        // Keep response text outside the rosco square area at all times.
         const roscoOuterRadius = this.roscoRadius + this.roscoButtonRadius;
         const roscoLeftBound = this.centerX - roscoOuterRadius;
         const roscoRightBound = this.centerX + roscoOuterRadius;
         const maxLeftCircleXByRosco = roscoLeftBound - roscoTextSafeGap - this.answerTextMaxWidth - gapTextToCircle;
         const minRightCircleXByRosco = roscoRightBound + roscoTextSafeGap + this.answerTextMaxWidth + gapTextToCircle;
-
         const baseOffsetX = this.roscoRadius + this.roscoButtonRadius + this.answerRadius + horizontalGapFromRosco;
-        const desiredLeftCircleX = this.centerX - baseOffsetX;
-        const desiredRightCircleX = this.centerX + baseOffsetX;
+        const leftCircleX = Math.max(minLeftCircleXByViewport, Math.min(this.centerX - baseOffsetX, Math.min(maxLeftCircleXByTextViewport, maxLeftCircleXByRosco)));
+        const rightCircleX = Math.max(Math.max(minRightCircleXByTextViewport, minRightCircleXByRosco), Math.min(this.centerX + baseOffsetX, maxRightCircleXByViewport));
 
-        const leftMinX = minLeftCircleXByViewport;
-        const leftMaxX = Math.min(maxLeftCircleXByTextViewport, maxLeftCircleXByRosco);
-        const rightMinX = Math.max(minRightCircleXByTextViewport, minRightCircleXByRosco);
-        const rightMaxX = maxRightCircleXByViewport;
-
-        const leftCircleX = Math.max(leftMinX, Math.min(desiredLeftCircleX, leftMaxX));
-        const rightCircleX = Math.max(rightMinX, Math.min(desiredRightCircleX, rightMaxX));
-
-        this.positionMap = {
-            1: { x: leftCircleX, y: this.centerY - verticalOffset, textSide: 'right' },
+        return {
+            1: { x: leftCircleX,  y: this.centerY - verticalOffset, textSide: 'right' },
             2: { x: rightCircleX, y: this.centerY - verticalOffset, textSide: 'left'  },
-            3: { x: leftCircleX, y: this.centerY + verticalOffset, textSide: 'right' },
+            3: { x: leftCircleX,  y: this.centerY + verticalOffset, textSide: 'right' },
             4: { x: rightCircleX, y: this.centerY + verticalOffset, textSide: 'left'  },
         };
+    }
 
-        this._drawAll();
+    _buildVerticalPositionMap() {
+        // Answers placed below the rosco in two rows: [A B] / [C D]
+        // Circle is on the outer side, text goes toward center
+        const rowGap = this.answerRadius * 2 + 20;
+        const baseY = this.centerY + this.roscoRadius + this.roscoButtonRadius + this.answerRadius + 30;
+        const halfGap = this.answerRadius + 14 + this.answerTextMaxWidth / 2;
+        const cx = this.centerX;
+
+        // Left column: circles at cx - halfGap, text to the right toward center
+        // Right column: circles at cx + halfGap, text to the left toward center
+        const leftX  = cx - halfGap;
+        const rightX = cx + halfGap;
+
+        return {
+            1: { x: leftX,  y: baseY,          textSide: 'right' }, // A top-left
+            2: { x: rightX, y: baseY,          textSide: 'left'  }, // B top-right
+            3: { x: leftX,  y: baseY + rowGap, textSide: 'right' }, // C bottom-left
+            4: { x: rightX, y: baseY + rowGap, textSide: 'left'  }, // D bottom-right
+        };
     }
 
     _drawAll() {
@@ -73,7 +100,7 @@ export class Question {
 
         // Letter label
         this.scene.add.text(pos.x, pos.y, label, {
-            fontSize: '32px',
+            fontSize: `${Phaser.Math.Clamp(Math.round(r * 0.64), 18, 32)}px`,
             fontFamily: 'Archivo Black',
             color: '#ffffff',
         }).setOrigin(0.5);
@@ -93,19 +120,22 @@ export class Question {
 
     _drawQuestion() {
         const cx = this.centerX;
-        const yFromRosco = this.centerY + this.roscoRadius + 170;
-        const barY = Math.min(this.scene.scale.height - 52, yFromRosco);
+        const yFromRosco = this.centerY + this.roscoRadius + Math.round(this.scene.scale.height * 0.22);
+        const barHeight = Phaser.Math.Clamp(Math.round(this.scene.scale.height * 0.085), 44, 64);
+        const barWidth = Phaser.Math.Clamp(this.scene.scale.width - 40, 320, 900);
+        const textWrapWidth = barWidth - 40;
+        const barY = Math.min(this.scene.scale.height - Math.round(barHeight / 2) - 8, yFromRosco);
 
         // Background bar
-        this.scene.add.rectangle(cx, barY, 900, 60, 0x1a1a2e, 0.75)
+        this.scene.add.rectangle(cx, barY, barWidth, barHeight, 0x1a1a2e, 0.75)
             .setOrigin(0.5);
 
         this.scene.add.text(cx, barY, this.questionText, {
-            fontSize: '20px',
+            fontSize: `${Phaser.Math.Clamp(Math.round(this.scene.scale.width * 0.016), 14, 20)}px`,
             fontFamily: 'Archivo Black',
             color: '#ffffff',
             align: 'center',
-            wordWrap: { width: 860 },
+            wordWrap: { width: textWrapWidth },
         }).setOrigin(0.5);
     }
 }

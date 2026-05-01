@@ -16,17 +16,26 @@ export class MainScene extends Phaser.Scene {
     }
 
     create() {
+        const isNarrow = this.scale.width < 1000;
+
+        const minSide = Math.min(this.scale.width, this.scale.height);
+        const roscoRadius = Phaser.Math.Clamp(Math.round(minSide * 0.30), 130, 260);
+        const buttonRadius = Phaser.Math.Clamp(Math.round(roscoRadius * 0.10), 14, 24);
+
+        const topPadding = 16;
+        const minCenterY = roscoRadius + buttonRadius + topPadding;
+        const desiredCenterY = isNarrow ? this.scale.height * 0.22 : this.scale.height * 0.46;
         const layoutCenter = {
             x: this.scale.width / 2,
-            y: this.scale.height / 2
+            y: Math.max(minCenterY, desiredCenterY)
         };
 
         const roscoConfig = {
             letters: 'ABCDEFGHIJLMNÑOPQRSTUVXYZ',
             centerX: layoutCenter.x,
             centerY: layoutCenter.y,
-            roscoRadius: 220,
-            buttonRadius: 22,
+            roscoRadius,
+            buttonRadius,
             backgroundColor: '#F0F0F0'
         };
 
@@ -46,7 +55,17 @@ export class MainScene extends Phaser.Scene {
                 roscoButtonRadius: roscoConfig.buttonRadius
             }
         );
+
+        this.scale.off('resize', this.handleResize, this);
+        this.scale.on('resize', this.handleResize, this);
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.scale.off('resize', this.handleResize, this);
+        });
     };
+
+    handleResize() {
+        this.scene.restart();
+    }
 
     update() {
     }
