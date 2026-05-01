@@ -35,7 +35,7 @@ export class Counter {
             this.width, topHeight,
             this.timeValue, null,
             {
-                type: 'square',
+                type: 'irregular',
                 circleColor: 0xfff200,
                 strokeColor: 0x000000,
                 strokeWidth: 2,
@@ -53,7 +53,7 @@ export class Counter {
             bottomBlockWidth, bottomHeight,
             `${this.correctValue}`, null,
             {
-                type: 'square',
+                type: 'irregular',
                 circleColor: 0xa2ff00,
                 strokeColor: 0x000000,
                 strokeWidth: 2,
@@ -71,7 +71,7 @@ export class Counter {
             bottomBlockWidth, bottomHeight,
             `${this.wrongValue}`, null,
             {
-                type: 'square',
+                type: 'irregular',
                 circleColor: 0xff4911,
                 strokeColor: 0x000000,
                 strokeWidth: 2,

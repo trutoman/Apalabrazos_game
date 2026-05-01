@@ -82,7 +82,7 @@ export class Question {
             label,
             null,
             {
-                type: 'square',
+                type: 'irregular',
                 circleColor: 0xff00f4,
                 strokeColor: 0x5b2c6f,
                 strokeWidth: 3,
@@ -124,7 +124,7 @@ export class Question {
             this.questionText,
             null,
             {
-                type: 'square',
+                type: 'irregular',
                 circleColor: 0xfadf09,
                 strokeColor: 0x000000,
                 strokeWidth: 2,

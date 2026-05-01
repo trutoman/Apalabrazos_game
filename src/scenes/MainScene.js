@@ -1,6 +1,7 @@
 import { Rosco } from '../ui/rosco.js';
 import { Question } from '../ui/question.js';
 import { Counter } from '../ui/counter.js';
+import { InteractiveButton } from '../ui/interactiveButton.js';
 
 export class MainScene extends Phaser.Scene {
     constructor() {
@@ -71,8 +72,32 @@ export class MainScene extends Phaser.Scene {
             correctValue: 0,
             wrongValue: 0
         });
+
+        this._addIrregularDemo();
     };
 
     update() {
+    }
+
+    _addIrregularDemo() {
+        const demoW = 400;
+        const demoH = 120;
+        new InteractiveButton(
+            this, 'irregular_demo',
+            20 + demoW / 2, 20 + demoH / 2,
+            demoW, demoH,
+            'IRREGULAR', null,
+            {
+                type: 'irregular',
+                circleColor: 0xff00f4,
+                strokeColor: 0x000000,
+                strokeWidth: 4,
+                textColor: '#ffffff',
+                fontSize: '24px',
+                shadowColor: 0x000000,
+                shadowAlpha: 1,
+                shadowDepth: 8
+            }
+        );
     }
 }
