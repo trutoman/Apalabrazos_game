@@ -11,11 +11,16 @@ export class MainScene extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet('buttons', 'assets/buttons_sprite.png',
-        { frameWidth: 250 , frameHeight: 250 }
-    );
+            { frameWidth: 250, frameHeight: 250 }
+        );
+        this.load.image('background', 'assets/background_squares.png');
     }
 
     create() {
+        const bg = this.add.image(this.scale.width / 2, this.scale.height / 2, 'background');
+        const bgScale = Math.max(this.scale.width / bg.width, this.scale.height / bg.height);
+        bg.setScale(bgScale);
+
         const layoutCenter = {
             x: this.scale.width / 2,
             y: this.scale.height * 0.46

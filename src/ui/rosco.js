@@ -19,8 +19,6 @@ export class Rosco {
     }
 
     create() {
-        this.scene.cameras.main.setBackgroundColor(this.backgroundColor);
-
         this.createCenterButton();
 
         this.letters.forEach((char, i) => {
@@ -65,7 +63,7 @@ export class Rosco {
                 strokeWidth: 2,
                 textColor: '#000000',
                 fontSize: '38px',
-                shadowDepth: 6
+                shadowDepth: 8
             }
         );
     }

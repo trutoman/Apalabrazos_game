@@ -69,12 +69,14 @@ export class Question {
             label,
             null,
             {
+                type: 'square',
                 circleColor: 0xff00f4,
                 strokeColor: 0x5b2c6f,
                 strokeWidth: 3,
                 textColor: '#ffffff',
                 fontSize: '32px',
-                shadowAlpha: 1
+                shadowAlpha: 1,
+                shadowDepth: 8
             }
         );
         this.answerButtons.set(answer.index, button);
@@ -118,7 +120,8 @@ export class Question {
                 shadowColor: 0x000000,
                 shadowAlpha: 1,
                 shadowDepth: 4,
-                useHandCursor: false
+                useHandCursor: false,
+                shadowDepth: 9
             }
         );
 
